@@ -1,5 +1,5 @@
 % Single step of the simulations
-function Cnew = single_step(C, xlim, ylim, delta_t)
+function Cnew = single_step(C, Cells, xlim, ylim, delta_t)
 
 %Model parameters
 
