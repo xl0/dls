@@ -1,9 +1,9 @@
 % Single step of the simulations
-function Cnew = single_step(C, Cells, xlim, ylim, delta_t)
+function [Cnew, Cells] = single_step(C, Cells, xlim, ylim, delta_t)
 
 %Model parameters
 
-Diffusion_rate = 0.5;
+Diffusion_rate = 0.9;
 Degradation_rate = 0.08;
 
 Cnew = zeros(size(C));
@@ -12,8 +12,28 @@ conv_m = [  0,  1, 0;
             0,  1, 0;
             ] / 4;
 
+        
+
+        
+% Do the diffusion
 Cnew = C + Diffusion_rate * conv2(C, conv_m, 'same');
-Cnew = Cnew*(1 - Degradation_rate);
+%sum(sum(Cnew))
+Cnew = Cnew * (1 - Degradation_rate);
+%sum(sum(Cnew))
+% Fire the cells
+for i = 1:length(Cells)
+    x = Cells(i, 1);
+    y = Cells(i, 2);
+    Threshold = Cells(i, 3);
+    
+    if (Cnew(x, y) > Threshold)
+        % Reset the threshold
+        Cells(i, 3) = 10000;
+        Cnew(x, y) = 300;
+    end
+        
+    
+end
 
 
 %for i = 1:ylim
