@@ -2,13 +2,16 @@ clear;
 close all;
 
 f1 = figure(1);
+%f2 = figure(2);
 
 screen_size = get(0, 'ScreenSize');
-set(f1, 'Position', [0 0 screen_size(3) screen_size(4) ] );
+%set(f1, 'Position', [0 0 screen_size(3) screen_size(4) ] );
+%set(f1, 'Resize', 'off');
+%set(f1, 'WindowStyle', 'modal');
 
 
-subplot(1, 2, 1);
-subplot(1, 2, 2);
+%subplot(1, 2, 1);
+%subplot(1, 2, 2);
 
 
 % Dimentions
@@ -29,17 +32,20 @@ C = zeros(ylim, xlim);
 
 % Cell vector
 
-Cells = [];
+Cells = zeros(Cell_number, 3);
 
 % Place the cells randomly;
 
 for i = 1:Cell_number
-    Cells =  [ Cells ;  floor((ylim) * rand() + 1) , ...
-                    floor((xlim) * rand() + 1), Start_threshold]; 
+    Cells(i, 1) = floor((ylim) * rand() + 1);
+    Cells(i, 2) = floor((xlim) * rand() + 1);
+    Cells(i, 3) = Start_threshold; 
 end
 
 
 C(100,75) = 300;
+
+cmap = color_map();
 
 % The main loop
 
@@ -47,16 +53,8 @@ for t = 1:delta_t:sim_time
     t
     [C, Cells] = single_step(C, Cells, xlim, ylim, delta_t);
 %    if (~mod(t, 1))
-        show_concentration(C, Cells);
-        im = frame2im(getframe(1));
-        [A,map] = rgb2ind(im,256);
-        if (t == 1)
-            imwrite(A, map, 'Model.gif', 'gif',  ...
-                'DelayTime', 0.1);
-        end
-        
-        imwrite(A, map, 'Model.gif', 'gif',  ...
-            'DelayTime', 0.1, 'WriteMode','append');
+              show_concentration(C, Cells, t, cmap);
+
         
 %    end
 %    sum(sum(C))
