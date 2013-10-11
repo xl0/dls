@@ -1,5 +1,5 @@
 % Single step of the simulations
-function [Cnew, Cells] = single_step(C, Cells, Parameters)
+function [Cnew, Cells] = single_step(C, Cells, t, Parameters)
 
 % Parameters = [  xlim, ... % 1
 %                 ylim, ... % 2
@@ -32,19 +32,30 @@ delta_t = Parameters(13);
 
 A = (C_max - C_min) * (T_rrp + T_arp) / T_rrp;
 
+s2 = sqrt(2);
+
+
+
+%sum(sum(Cnew))
+% Fire the cells
+
+
 Cnew = zeros(size(C));
 conv_m = [  0,  1, 0;
             1, -4, 1;
             0,  1, 0;
             ] / 4;
       
+
 % Do the diffusion
 Cnew = C + delta_t * Diffusion_rate * conv2(C, conv_m, 'same');
 %sum(sum(Cnew))
 Cnew = Cnew * (1 - delta_t * Degradation_rate);
-%sum(sum(Cnew))
-% Fire the cells
 
+% assert(min(min(Cnew) < 0));
+
+%min(min(Cnew))
+assert(min(min(Cnew)) >= 0);
 %Decrease the absolute refractory period for all affected cells.
 
 for i = 1:length(Cells)
@@ -53,72 +64,32 @@ for i = 1:length(Cells)
     y = Cells(i, 2);
 
     T = Cells(i, 3);
-    E = 0.93; %Cells(i, 4);
-    
-    
-    % Update time since last fiering
-    T = T + delta_t;
-    
+    E = Cells(i, 4);
     
     % Update E
-    %E = E - alpha * E + beta * Cnew(x, y);
-    %E = min(E, E_max); % Can't go over the top.
+    E = E + delta_t * ( - alpha * E + beta * C(x, y));
+    E = min(E, E_max); % Can't go over the top.
     
-     C_thresh = max(C_min, (C_max - A * (T - T_arp) / (T)));% * (1 - E);
+    C_thresh = max(C_min, (C_max - A * (T - T_arp) / (T))) * (1 - E);
     % C_thresh = get_threshold(T, E, A, Parameters);
 
     
-    if (T > T_arp)
-            if (Cnew(x, y) > C_thresh || T > 15)
+    if ( T > T_arp)
+            if (C(x, y) > C_thresh || T > T_max)
                 T = 0;
-                Cnew(x, y) =  300;
+                Cnew(x, y) = Cnew(x, y) + 300;
             end
         
     end
     
+    % Update time since last fiering
+    T = T + delta_t;
+    
     Cells(i, 3) = T;
     Cells(i, 4) = E;
     % For the absolute refractory period cells.
-    
-    
-%     
-%     
-%     % Check the absolute refractory period
-%     if (Cells(i, 3) > 0)
-%         % Decrease by delta t;
-%         Cells(i, 3) = Cells(i, 3) - delta_t;
-%     else
-%         % Else, check the relative refractory period
-%         if (Cells(i, 4) > 0)
-%             Cells(i, 4) = Cells(i, 4) - delta_t;
-%         end
-%         
-%         tx = T_rrp - Cells(i, 4);
-%         Threshold = (C_max - A * tx / (tx + T_arp));
-%         
-%     end
-%     
-%     
-%     
-%     if (Cnew(x, y) > Threshold)
-%         Cells(i, 3) = 8;
-%         Cells(i, 4) = 2;
-%         Cnew(x, y) = 300;
-%     end
 end
 
-
-%for i = 1:ylim
-%    for j = 1:xlim
-
-        
-%        cont_diff = C(cart_neighbours(i, j, ylim, xlim)) - C(i, j);
-        
-%        Cnew(i, j) = C(i, j) + ...
-%            delta_t * Diffusion_rate * sum(cont_diff) / length(cont_diff);
-%        Cnew(i, j) = Cnew(i, j) - delta_t * Degradation_rate * Cnew(i, j);       
-%    end
-%end
 
 
 end

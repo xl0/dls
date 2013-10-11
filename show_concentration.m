@@ -26,18 +26,18 @@ end
 Spacer = ones(size(C, 1), 3) * 5;
 
 
-imshow(horzcat(C, Spacer, Cells_matrix), c_map,  'InitialMagnification', 100, 'Border', 'tight');
+imshow(horzcat(C, Spacer, Cells_matrix), c_map,   'Border', 'tight');
 
-
+% 
 
 im = frame2im(getframe());
 [A,map] = rgb2ind(im,256);
 if (t == 1)
-    imwrite(A, map, 'Model.gif', 'gif',  ...
+    imwrite(A, map, 'Model2.gif', 'gif',  ...
         'DelayTime', 0.03);
 end
 
-imwrite(A, map, 'Model.gif', 'gif',  ...
+imwrite(A, map, 'Model2.gif', 'gif',  ...
     'DelayTime', 0.03, 'WriteMode','append');
 
 %figure;
