@@ -10,7 +10,7 @@ for i = 1:length(Cells)
     x = Cells(i, 1);
     y = Cells(i, 2);
     T = Cells(i, 3);
-    
+
     if (T < T_arp)
         Cells_matrix(x, y) = 500;
     else if (T < T_arp + T_rrp)
@@ -25,20 +25,20 @@ end
 % subplot(1, 2, 2);
 Spacer = ones(size(C, 1), 3) * 5;
 
-
-imshow(horzcat(C, Spacer, Cells_matrix), c_map,   'Border', 'tight');
+imshow(horzcat(C, Spacer, Cells_matrix), c_map,  'Border', 'tight', ...
+    'InitialMagnification', 100);
 
 % 
 
-im = frame2im(getframe());
-[A,map] = rgb2ind(im,256);
-if (t == 1)
-    imwrite(A, map, 'Model2.gif', 'gif',  ...
-        'DelayTime', 0.03);
-end
+%im = frame2im(getframe());
+%[A,map] = rgb2ind(im,256);
+%if (t == 1)
+%%    imwrite(A, map, 'Model2.gif', 'gif',  ...
+%        'DelayTime', 0.03);
+%end
 
-imwrite(A, map, 'Model2.gif', 'gif',  ...
-    'DelayTime', 0.03, 'WriteMode','append');
+%imwrite(A, map, 'Model2.gif', 'gif',  ...
+%    'DelayTime', 0.03, 'WriteMode','append');
 
 %figure;
 %contour(C);

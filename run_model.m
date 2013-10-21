@@ -22,7 +22,7 @@ ylim = 500;
 
 %Model parameters
 
-Diffusion_rate = 0.1;
+Diffusion_rate = 0.9;
 Degradation_rate = 0.8;
 
 % Absolute and relative refractory periods
@@ -36,15 +36,15 @@ C_max = 100;
 C_min = 4;
 
 alpha = 0.0005;
-beta = 1.24;
+beta = 1.25;
 
-E_max = 0.93;
+E_max = 0.0;
 
 Cell_density = 0.7;
 % Start_threshold = 4;
 
 % Simulation resolution
-delta_t = 0.1;
+delta_t = 1;
 % Sumulation time
 sim_time = 10000;
 
@@ -87,14 +87,15 @@ Cells = generate_cells(xlim, ylim, Cell_density);
 
 fprintf('Starting simulation...\n');
 
-
-
 % The main loop
 n = 0;
 for t = 0:delta_t:sim_time
+    t
     n = n + 1;
     [C, Cells] = single_step(C, Cells, t, Parameters);
-    show_concentration(C, Cells, c_map, t, Parameters);
+    %if (~mod(t, 1))
+        show_concentration(C, Cells, c_map, t, Parameters);
+    %end
     
 %     for i = 1:10
 %         Cell = Cells(floor(length(Cells) / i),:);

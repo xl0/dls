@@ -39,12 +39,12 @@ s2 = sqrt(2);
 %sum(sum(Cnew))
 % Fire the cells
 
-
+%s2 = 0;
 Cnew = zeros(size(C));
-conv_m = [  0,  1, 0;
-            1, -4, 1;
-            0,  1, 0;
-            ] / 4;
+conv_m = [  s2,  1, s2;
+            1, -4 - 4*s2, 1;
+            s2,  1, s2;
+            ] / (4 + 4*s2);
       
 
 % Do the diffusion
@@ -64,18 +64,18 @@ for i = 1:length(Cells)
     y = Cells(i, 2);
 
     T = Cells(i, 3);
-    E = Cells(i, 4);
+    E = 0; % Cells(i, 4);
     
     % Update E
-    E = E + delta_t * ( - alpha * E + beta * C(x, y));
-    E = min(E, E_max); % Can't go over the top.
+    %E = E + delta_t * ( - alpha * E + beta * C(x, y));
+    %E = min(E, E_max); % Can't go over the top.
     
     C_thresh = max(C_min, (C_max - A * (T - T_arp) / (T))) * (1 - E);
     % C_thresh = get_threshold(T, E, A, Parameters);
 
     
     if ( T > T_arp)
-            if (C(x, y) > C_thresh || T > T_max)
+            if (Cnew(x, y) > C_thresh || T > T_max)
                 T = 0;
                 Cnew(x, y) = Cnew(x, y) + 300;
             end
@@ -86,7 +86,7 @@ for i = 1:length(Cells)
     T = T + delta_t;
     
     Cells(i, 3) = T;
-    Cells(i, 4) = E;
+    %Cells(i, 4) = E;
     % For the absolute refractory period cells.
 end
 
