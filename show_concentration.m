@@ -1,46 +1,46 @@
-function show_concentration(C, Cells, c_map, t,  Parameters)
-
-T_arp = Parameters(5);
-T_rrp = Parameters(6);
-T_max = Parameters(7);
+function show_concentration(C, Cells, c_map, t, video, P)
 
 Cells_matrix = zeros(size(C));
 
+% Construct the cell matrix for display.
 for i = 1:length(Cells)
     x = Cells(i, 1);
     y = Cells(i, 2);
     T = Cells(i, 3);
 
-    if (T < T_arp)
+    if (T < P.T_arp)
         Cells_matrix(x, y) = 500;
-    else if (T < T_arp + T_rrp)
+    else if (T < P.T_arp + P.T_rrp)
             Cells_matrix(x, y) = 501;
         else
             Cells_matrix(x, y) = 502;
         end
     end
 end
-%figure(2)
-%set(0, 'CurrentFigure', 2);
-% subplot(1, 2, 2);
-Spacer = ones(size(C, 1), 3) * 5;
 
-imshow(horzcat(C, Spacer, Cells_matrix), c_map,  'Border', 'tight', ...
-    'InitialMagnification', 100);
+Spacer = ones(size(C, 1), 4) * 100 ;
 
-% 
+if (P.display)
+    imshow(horzcat(C, Spacer, Cells_matrix), c_map,  'Border', 'tight', ...
+        'InitialMagnification', 100);
+end
 
-%im = frame2im(getframe());
-%[A,map] = rgb2ind(im,256);
-%if (t == 1)
-%%    imwrite(A, map, 'Model2.gif', 'gif',  ...
-%        'DelayTime', 0.03);
-%end
 
-%imwrite(A, map, 'Model2.gif', 'gif',  ...
-%    'DelayTime', 0.03, 'WriteMode','append');
+
+rgb_img = ind2rgb(round(horzcat(C, Spacer, Cells_matrix)), c_map);
+[A,map] = rgb2ind(rgb_img, 256);
+
+if (P.record)
+    frame_name = sprintf('%s/video/frame_%.6d.png', P.model_base, t);
+    imwrite(A, map, frame_name, 'png');
+end
+
+
 
 %figure;
+
+
+
 %contour(C);
 % colorbar;
 drawnow;
