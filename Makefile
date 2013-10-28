@@ -43,4 +43,3 @@ $(OUT_DIR)/%: $(OUT_DIR)/%.m
 	./gen_video.sh $@/video
 	cat $(OUT_DIR)/model_*.css > $(OUT_DIR)/tables.css
 
-

@@ -30,35 +30,126 @@ EOF
 
 
 function gen_table_header {
-	cat <<EOF >> index.html
+	table_num=$(($table_num+1))
+	echo "i after = $table_num"
+
+	echo "<hr style=\"clear:both;\">" > table-${table_num}.html 
+	echo "<div style=\"float:left; width:30%;\" >" >> table-${table_num}.html
+
+	if [ -n "${_xlim}" ]; then
+		echo "xlim = ${_xlim};</br>" >> table-${table_num}.html
+	fi
+
+	if [ -n "${_ylim}" ]; then
+		echo "ylim = ${_ylim};</br>" >> table-${table_num}.html
+	fi
+
+	if [ -n "${_T_arp}" ]; then
+		echo "T_arp = ${_T_arp};</br>" >> table-${table_num}.html
+	fi
+
+	if [ -n "${_T_rrp}" ]; then
+		echo "T_rrp = ${_T_rrp};</br>" >> table-${table_num}.html
+	fi
+
+	if [ -n "${_T_max}" ]; then
+		echo "T_max = ${_T_max};</br>" >> table-${table_num}.html
+	fi
+
+	if [ -n "${_C_max}" ]; then
+		echo "C_max = ${_C_max};</br>" >> table-${table_num}.html
+	fi
+
+	if [ -n "${_alpha}" ]; then
+		echo "alpha = ${_alpha};</br>" >> table-${table_num}.html
+	fi
+
+	if [ -n "${_beta}" ]; then
+		echo "beta = ${_beta};</br>" >> table-${table_num}.html
+	fi
+
+	if [ -n "${_E_max}" ]; then
+		echo "E_max = ${_E_max};</br>" >> table-${table_num}.html
+	fi
+
+	if [ -n "${_E_zero}" ]; then
+		echo "E_zero = ${_E_zero};</br>" >> table-${table_num}.html
+	fi
+
+	if [ -n "${_Cell_density}" ]; then
+		echo "Cell_density = ${_Cell_density};</br>" >> table-${table_num}.html
+	fi
+
+	if [ -n "${_delta_t}" ]; then
+		echo "delta_t = ${_delta_t};</br>" >> table-${table_num}.html
+	fi
+
+	if [ -n "${sim_time}" ]; then
+		echo "sim_time = ${_sim_time};</br>" >> table-${table_num}.html
+	fi
+
+	if [ -n "${_Diffusion_rate}" ]; then
+		echo "Diffusion_rate = ${_Diffusion_rate};</br>" >> table-${table_num}.html
+	fi
+	
+	if [ -n "${_Degradation_rate}" ]; then
+		echo "Degradation_rate = ${_Degradation_rate};</br>" >> table-${table_num}.html
+	fi
+	
+	echo "</div>" >> table-${table_num}.html
+
+	echo "<h3><a href=\"batch-${table_num}.html\">See all results for table ${table_num}</a></h3>" >> table-${table_num}.html
+	
+	cat <<EOF >> table-${table_num}.html
 <table border="1">
   <tr><th></th>
 EOF
 
+
 # Fill in the given values
 for i in $*; do
-	echo "<th>$i</th>" >> index.html
+	echo "<th>$i</th>" >> table-${table_num}.html
 done
 
-echo "</tr>" >> index.html
+echo "</tr>" >> table-${table_num}.html
+
+cat <<EOF > batch-${table_num}.html
+<html>
+<body>
+<style type="text/css">
+a:link {color:#000000;}
+a:visited {color:#000000;}
+</style>
+<link href="tables.css" rel="stylesheet">
+EOF
+
+
+
 
 }
 
 function gen_table_footer {
-	echo "</table>" >> index.html
+	echo "</table>" >> table-${table_num}.html
+
+	cat table-${table_num}.html >> index.html
+	cat table-${table_num}.html batch-${table_num}.html > tmp
+	
+	echo "<a href=\"index.html\">Back</a>" > batch-${table_num}.html
+	cat tmp >> batch-${table_num}.html
+	rm tmp
 }
 
 function gen_table_left {
-	echo "<tr>" >> index.html
-	echo "<th>$1</th>" >> index.html
+	echo "<tr>" >> table-${table_num}.html
+	echo "<th>$1</th>" >> table-${table_num}.html
 }
 
 function gen_table_right {
-	echo "</tr>" >> index.html
+	echo "</tr>" >> table-${table_num}.html
 }
 
 function gen_table_cell {
-	echo "<th><a class=\"$model_base\" href=\"$model_html\">$1 $2</a></th>" >> index.html
+	echo "<th><a class=\"$model_base\" href=\"$model_html\">$1 $2</a></th>" >> table-${table_num}.html
 }
 
 function gen_mat {
@@ -114,7 +205,7 @@ EOF
 	model_html="${model_base}.html"
 
 	cat <<EOF > ${model_html}
-<hr>
+<hr style="clear:both;">
 <p>
 <pre>
 xlim: ${_xlim}
@@ -147,6 +238,8 @@ EOF
 
 
 gen_table_cell ${_Diffusion_rate} ${_Degradation_rate} 
+
+	cat ${model_base}.html >> batch-${table_num}.html
 
 }
 function gen_vars {
@@ -211,11 +304,11 @@ beta=(0);
 E_zero=(0.93)
 E_max=(0.93);
 
-Cell_density=(0.98);
+Cell_density=(0.5 0.75 0.98);
 
 delta_t=(1);
 
-checkpoints=(50 100 150 250 500)
+checkpoints=(50 100 150 250)
 # Simulate until the last checkpoint
 sim_time=(${checkpoints[${#checkpoints[@]}-1]})
 
@@ -223,6 +316,7 @@ Diffusion_rate=(0.01 0.2 0.8 0.95)
 Degradation_rate=(0.3 0.5 0.7 0.8 0.99)
 
 gen_html_header
+table_num=0
 
 for _xlim in ${xlim[*]}; do
 for _ylim in ${ylim[*]}; do
@@ -247,8 +341,10 @@ for _Diffusion_rate in ${Diffusion_rate[*]}; do
 		gen_mat
 #		gen_table_cell $_Diffusion_rate $_Degradation_rate
 	done
+	unset _Degradation_rate
 	gen_table_right
 done
+unset _Diffusion_rate
 gen_table_footer
 done
 done
