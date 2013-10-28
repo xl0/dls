@@ -23,9 +23,8 @@ Spacer = ones(size(C, 1), 4) * 100 ;
 if (P.display)
     imshow(horzcat(C, Spacer, Cells_matrix), c_map,  'Border', 'tight', ...
         'InitialMagnification', 100);
+    drawnow;
 end
-
-
 
 rgb_img = ind2rgb(round(horzcat(C, Spacer, Cells_matrix)), c_map);
 [A,map] = rgb2ind(rgb_img, 256);
@@ -35,14 +34,7 @@ if (P.record)
     imwrite(A, map, frame_name, 'png');
 end
 
-
-
-%figure;
-
-
-
-%contour(C);
-% colorbar;
-drawnow;
-%pause;
+if(ismember(t, P.checkpoints))
+    checkpoint_name = sprintf('%s/%s_%d.png', P.model_base, P.model_base, t);
+    imwrite(A, map, checkpoint_name, 'png');
 end

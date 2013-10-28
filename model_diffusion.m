@@ -18,8 +18,8 @@ function Cnew = single_step(C, P)
 % Cnew = C + delta_t * Diffusion_rate * conv2(C, conv_m, 'same');
 % %sum(sum(Cnew))
 
-Cnew = C * (1 - P.delta_t * P.Degradation_rate) ...
-    + (P.Diffusion_rate * P.delta_t) .* hexdiff(C);
+Cnew = C * (1 - P.Degradation_rate);
+Cnew = Cnew + (P.Diffusion_rate) .* hexdiff(Cnew);
 
 % Just in case.
 assert(min(min(Cnew)) >= 0);

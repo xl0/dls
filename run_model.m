@@ -1,4 +1,4 @@
-function zz = run_model(P)
+function run_model(P)
 
 P
 
@@ -6,7 +6,7 @@ rng(1337);
 
 mkdir(P.model_base);
 
-generate_model_html(P);
+% generate_model_html(P);
 
 
 A = (P.C_max - P.C_min) * (P.T_rrp + P.T_arp) / P.T_rrp;
@@ -24,6 +24,8 @@ end
 
 fprintf('Starting simulation...\n');
 
+avg_record = zeros(1, P.sim_time * P.delta_t);
+
 % The main loop
 n = 0;
 for t = 0:P.delta_t:P.sim_time
@@ -35,7 +37,10 @@ for t = 0:P.delta_t:P.sim_time
         if (P.record || ismember(t, P.checkpoints))
             show_concentration(C, Cells, c_map, t, video, P);
         end
+        avg_record(t+1) = mean(mean(C));
     end
+    
+    
        
 %     for i = 1:10
 %         Cell = Cells(floor(length(Cells) / i),:);
@@ -64,6 +69,8 @@ for t = 0:P.delta_t:P.sim_time
 
 
 end
+
+record_css(mean(avg_record), P);
 
 %end
 fprintf('Done!\n');
