@@ -11,7 +11,6 @@ cd $OUT_DIR
 function gen_html_header {
 	cat <<EOF > index.html
 <html>
-
 <body>
 <style type="text/css">
 a:link {color:#000000;}
@@ -31,7 +30,6 @@ EOF
 
 function gen_table_header {
 	table_num=$(($table_num+1))
-	echo "i after = $table_num"
 
 	echo "<hr style=\"clear:both;\">" > table-${table_num}.html 
 	echo "<div style=\"float:left; width:30%;\" >" >> table-${table_num}.html
@@ -91,20 +89,19 @@ function gen_table_header {
 	if [ -n "${_Diffusion_rate}" ]; then
 		echo "Diffusion_rate = ${_Diffusion_rate};</br>" >> table-${table_num}.html
 	fi
-	
+
 	if [ -n "${_Degradation_rate}" ]; then
 		echo "Degradation_rate = ${_Degradation_rate};</br>" >> table-${table_num}.html
 	fi
-	
+
 	echo "</div>" >> table-${table_num}.html
 
 	echo "<h3><a href=\"batch-${table_num}.html\">See all results for table ${table_num}</a></h3>" >> table-${table_num}.html
-	
+
 	cat <<EOF >> table-${table_num}.html
 <table border="1">
-  <tr><th></th>
+  <tr><th>Diffusion\\Degradation</th>
 EOF
-
 
 # Fill in the given values
 for i in $*; do
@@ -133,7 +130,7 @@ function gen_table_footer {
 
 	cat table-${table_num}.html >> index.html
 	cat table-${table_num}.html batch-${table_num}.html > tmp
-	
+
 	echo "<a href=\"index.html\">Back</a>" > batch-${table_num}.html
 	cat tmp >> batch-${table_num}.html
 	rm tmp
@@ -154,8 +151,6 @@ function gen_table_cell {
 
 function gen_mat {
 	model_base="model_\
-${_xlim}_\
-${_ylim}_\
 ${_T_arp}_\
 ${_T_rrp}_\
 ${_T_max}_\
@@ -232,20 +227,18 @@ EOF
 		echo "<img src=\"${model_base}/${model_base}_${cp}.png\">" >> ${model_html}
 	done
 
-	echo "<video controls>" >> ${model_html} 
+	echo "<video controls>" >> ${model_html}
 	echo "<source src=\"${model_base}/video/video.mp4\" type=\"video/mp4\">" >> ${model_html}
 	echo "</video>" >> ${model_html}
 
 
-gen_table_cell ${_Diffusion_rate} ${_Degradation_rate} 
+gen_table_cell ${_Diffusion_rate} ${_Degradation_rate}
 
 	cat ${model_base}.html >> batch-${table_num}.html
 
 }
 function gen_vars {
 	vars_base="\
-${_xlim}_\
-${_ylim}_\
 ${_T_arp}_\
 ${_T_rrp}_\
 ${_T_max}_\
@@ -298,22 +291,22 @@ T_max=(15)
 C_max=(100)
 C_min=(4)
 
-alpha=(0);
-beta=(0);
+alpha=(0.0005)
+beta=(1.24)
 
-E_zero=(0.93)
-E_max=(0.93);
+E_zero=(0)
+E_max=(0.93)
 
 Cell_density=(0.5 0.75 0.98);
 
-delta_t=(1);
+delta_t=(1)
 
-checkpoints=(50 100 150 250)
+checkpoints=(250 700 1125 3500 16500)
 # Simulate until the last checkpoint
 sim_time=(${checkpoints[${#checkpoints[@]}-1]})
 
-Diffusion_rate=(0.01 0.2 0.8 0.95)
-Degradation_rate=(0.3 0.5 0.7 0.8 0.99)
+Diffusion_rate=(0.5 0.8 0.99)
+Degradation_rate=(0.2 0.3 0.5 0.6 0.7 0.8)
 
 gen_html_header
 table_num=0
