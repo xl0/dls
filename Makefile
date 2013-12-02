@@ -39,7 +39,7 @@ $(OUT_DIR)/report.html: gen_models
 # Run a model
 $(OUT_DIR)/%: $(OUT_DIR)/%.m
 	@ echo "Generating $@ from $<"
-	cd $(OUT_DIR) ; $(MATLAB) -nodisplay -r "$(notdir $@); quit;"
+	cd $(OUT_DIR) ; $(MATLAB) -nodesktop -r "$(notdir $@); quit;"
 	./gen_video.sh $@/video
 	cat $(OUT_DIR)/model_*.css > $(OUT_DIR)/tables.css
 

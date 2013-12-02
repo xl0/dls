@@ -14,7 +14,7 @@ end
 Cell_number = sum(sum(Tmp));
 
 [i, j] = find(Tmp > 0);
-Cells =  [i, j, 3 .* randn(length(i), 1), ones(length(i), 1) * P.E_zero];
+Cells =  [j, i, 3 .* randn(length(i), 1), ones(length(i), 1) * P.E_zero];
 
 end
 

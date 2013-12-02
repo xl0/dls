@@ -184,11 +184,12 @@ ${_Degradation_rate}"
 	Parameters.E_max = ${_E_max};
 	Parameters.E_zero = ${_E_zero};
 	Parameters.Cell_density = ${_Cell_density};
+	Parameters.move = ${move};
 	Parameters.delta_t = ${_delta_t};
 	Parameters.sim_time = ${_sim_time};
 	Parameters.checkpoints = [${checkpoints[*]}];
-	Parameters.display = 0;
-	Parameters.record = 1;
+	Parameters.display = ${display};
+	Parameters.record = ${record};
 	Parameters.model_base ='$model_base';
 
 	addpath $MODEL_DIR
@@ -271,11 +272,12 @@ ${_Degradation_rate}"
 	E_max=${_E_max}
 	E_zero=${_E_zero}
 	Cell_density=${_Cell_density}
+	move=${move}
 	delta_t=${_delta_t}
 	sim_time=${_sim_time}
 	checkpoints=(${checkpoints[*]})
-	display=0
-	record=1
+	display=${display}
+	record=${record}
 	model_base='$vars_base'
 EOF
 }
@@ -297,7 +299,7 @@ beta=(1.24)
 E_zero=(0)
 E_max=(0.93)
 
-Cell_density=(0.5 0.75 0.98);
+Cell_density=(0.75);
 
 delta_t=(1)
 
@@ -305,8 +307,14 @@ checkpoints=(250 700 1125 3500 16500)
 # Simulate until the last checkpoint
 sim_time=(${checkpoints[${#checkpoints[@]}-1]})
 
-Diffusion_rate=(0.5 0.8 0.99)
-Degradation_rate=(0.2 0.3 0.5 0.6 0.7 0.8)
+Diffusion_rate=(0.8)
+Degradation_rate=(0.8)
+
+move=1
+
+
+display=1
+record=1
 
 gen_html_header
 table_num=0
